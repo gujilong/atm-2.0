@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dayuan.mapper.TransferMapper">
+  <resultMap id="BaseResultMap" type="com.dayuan.entity.Transfer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="out_card_no" jdbcType="VARCHAR" property="outCardNo" />
+    <result column="in_card_no" jdbcType="VARCHAR" property="inCardNo" />
+    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="modify_time" jdbcType="DATE" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, out_card_no, in_card_no, money, status, create_time, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from transfer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from transfer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.dayuan.entity.Transfer">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into transfer (out_card_no, in_card_no, money, 
+      status, create_time, modify_time
+      )
+    values (#{outCardNo,jdbcType=VARCHAR}, #{inCardNo,jdbcType=VARCHAR}, #{money,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{modifyTime,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.dayuan.entity.Transfer">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into transfer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="outCardNo != null">
+        out_card_no,
+      </if>
+      <if test="inCardNo != null">
+        in_card_no,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="outCardNo != null">
+        #{outCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="inCardNo != null">
+        #{inCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dayuan.entity.Transfer">
+    update transfer
+    <set>
+      <if test="outCardNo != null">
+        out_card_no = #{outCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="inCardNo != null">
+        in_card_no = #{inCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dayuan.entity.Transfer">
+    update transfer
+    set out_card_no = #{outCardNo,jdbcType=VARCHAR},
+      in_card_no = #{inCardNo,jdbcType=VARCHAR},
+      money = #{money,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      modify_time = #{modifyTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="seByStatus" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from transfer
+    where status = #{status}
+    order by create_time limit  #{startIndex},#{rows};
+  </select>
+
+  <update id="updateStatus" parameterType="com.dayuan.entity.Transfer">
+    update transfer
+    set status = #{status,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=DATE}
+    where id = #{id} and status =#{oldStatus}
+  </update>
+</mapper>
